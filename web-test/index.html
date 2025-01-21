@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      /* Element */
+      .circle {
+        border: 1px solid black;
+        height: 100px;
+        width: 100px;
+        border-radius: 50px;
+        background-color: black;
+      }
+      .box {
+        border: 1px solid rgb(110, 104, 104);
+        height: 100px;
+        width: 100px;
+        font-size: 2rem;
+      }
+      .box1 {
+        margin-bottom: 10px; /* 마진 겹침 현상 */
+        background-color: chartreuse;
+      }
+      .box2 {
+        margin-top: 10px; /* 마진 겹침 현상 */
+        background-color: rgb(39, 25, 25);
+      }
+      .box3 {
+        color: red;
+        padding-bottom: 10px;
+        padding-left: 10px;
+      }
+      .box4 {
+        height: 50%;
+        width: 50%;
+      }
+
+      .box-wrapper {
+        width: 640;
+        height: 480;
+        border: 10px solid red;
+      }
+
+      .box-wrapper:hover {
+        background-color: lightgray;
+        cursor: pointer;
+      }
+      ul {
+        padding: 0;
+      }
+      li {
+        list-style: none;
+      }
+      a {
+        text-decoration: none;
+        color: black;
+        font-size: 2rem;
+      }
+
+      button {
+        border: none solid black;
+        background-color: white;
+        border-radius: 0px;      
+      }
+      button:hover {
+        background-color: lightgray;
+        cursor: pointer;
+      }
+      /*
+        margin은 크기를 안바꿈
+        padding은 크기를 바꿈
+      */
+    </style>
+  </head>
+  <body>
+    <div class="box box1">box1</div>
+    <div class="box box2">box2</div>
+    <div class="box box3">box3</div>
+
+    <div class="box box-wrapper">
+      <div class="box box4">box4</div>
+    </div>
+
+    <ul>
+      <li>짜장면</li>
+      <li>짬뽕</li>
+      <li>탕수육</li>
+    </ul>
+
+    <a href="#">네이버로 가자!</a>
+    <button class="btn">버튼</button>
+  </body>
+</html>

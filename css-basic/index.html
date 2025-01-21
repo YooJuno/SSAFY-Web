@@ -1,0 +1,134 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale" />
+
+    <!-- Not HTML, but CSS-->
+    <style>
+      /* Element 선택자 */
+      p {
+        /* Property */
+        color: pink; /* key -value 형식으로 들어감 */
+      }
+
+      /* id 선택자, 고유 식별자, #으로 호출 */
+      #number2 {
+        border: 2px solid black;
+      }
+      #user-name {
+        color: 2px solid red;
+      }
+
+      /* 클래스 선택자 */
+      .etc {
+        color: 2px solid green;
+      }
+      .parent1 > .child1 {
+        color: bisque;
+      }
+      /* 중간 경로는 생략 가능 */
+      .parent1 /* > .parent2 */ > .child1 {
+        color: bisque;
+      }
+
+      /* 내가 원하는 다중 클래스만 묶어서 적용 */
+      .p1,
+      .p2 {
+        color: blueviolet;
+      }
+
+      /* (*)모든 것에 적용 */
+      * {
+        color: 2px solid yellow;
+      }
+
+      /* 내꺼 */
+      .my-color {
+        color: rgb(28, 72, 111);
+      }
+
+      .my-size {
+        font-size: 4rem;
+        /* rem은 반응형 */
+        /* 1rem? 루트 폰트와 같음 */
+        /* 0.7rem? 루트 폰트보다 70% 정도의 크기 */
+        /* 2rem? 루트 폰트의 2배 크기 */
+        /* 루트 폰트의 크기는... 브라우저마다 다름 */
+      }
+      .my-word {
+        font-size: 20px; /* pixel은 절대적인 단위임. 고정되어 있음. 반응형에선 피해야됨 */
+        font-weight: bold;
+        color: rgb(21, 87, 26);
+        text-align: center;
+        /* default: left */
+        /* justify : 좌우 공백 제거. 양방향 정렬 */
+      }
+
+      .box {
+        /* border: 2px solid black; 
+        border-bottom: 2px solid black;
+        border-top: 2px solid black;*/
+        border-left: 2px solid black;
+        border-right: 2px solid black;
+
+        height: 300px;
+        width: 300px;
+      }
+      .custom-btn {
+        width: 10rem;
+        height: 5rem;
+        border: 0.1rem solid black;
+        border-radius: 10px;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+      /* 마우스 오버 시 스타일 추가 */
+      .custom-btn:hover {
+        background-color: lightgray;
+      }
+    </style>
+
+    <!-- Attribute -->
+    <!-- <link rel="stylesheet" href="./style.css" /> -->
+
+    <title>Document</title>
+  </head>
+
+  <body>
+    <!-- 핑크보다 밑에 있어서 빨간색이 적용됨. -->
+    <p style="color: red">CSS 인라인 적용</p>
+    <p id="number1">1번</p>
+    <p id="number2">2번</p>
+    <p id="user-name">아이디</p>
+
+    <div class="etc">클래스</div>
+    <p class="etc">클래스</p>
+
+    <div class="parent"></div>
+
+    <!-- cmd => { .parent>div*3 } -->
+    <!-- Ctrl + Alt + 방향키키 -->
+    <div class="parent1">
+      <div class="child1"></div>
+      <div class="parent2">
+        <div class="child2"></div>
+      </div>
+    </div>
+
+    <div class="my-color my-size">hi</div>
+
+    <p class="my-word">글자 중앙 정렬</p>
+
+    <div class="box">box~~</div>
+    <ul>
+      <li><button class="custom-btn">radius box</button></li>
+    </ul>
+  </body>
+</html>
+
+<!-- 
+프론트는 언어 3개가 혼용돼서 쓰임
+1. HTML - 내용
+2. CSS - 디자인
+3. JavaScript - 로직
+-->

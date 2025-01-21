@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- 블럭 태그를 쓰면 크기 조절이 편함. -->
+    <!-- 인라인은 크기 조절 안되고, 마진 패딩 조절 어려움 -->
+    <!-- a태그는 내가 쓰는 만큼만 씀 (inline) -->
+
+    <style>
+      a {
+        border: 1px solid black;
+
+        /* a 태그를 블록 요소로 설정하여 줄바꿈이 적용되도록 합니다. */
+        /* 이걸 안해주면 인라인으로 작동돼서 다루기 힘들어짐. */
+        display: block;
+      }
+      p {
+        display: inline; /* p 태그를 인라인 요소로 설정하여 다른 요소와 같은 줄에 배치될 수 있도록 합니다. */
+      }
+      .parent {
+        border: 5px solid red;
+        width: 100px;
+      }
+      .parent > p {
+        border: 1px solid black;
+      }
+      h1 {
+        /* JS에서 사용함 */
+        /* ex) 로그인한 유저라면, 로그인 버튼이 안보이도록 */
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="parent">
+      <p>안녕</p>
+    </div>
+    <div></div>
+  </body>
+</html>
