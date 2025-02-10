@@ -17,7 +17,7 @@ const users = [
 ];
 
 // filter : 리턴이 true 라면 새로운 배열 추가
-const jobUsers1 = users.filter((user) => user.hasJob);
+const jobUsers1 = users.filter((user) => user.hasJob === true);
 console.log(jobUsers1);
 
 users[2].hasJob = true;
