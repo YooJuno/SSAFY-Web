@@ -8,9 +8,9 @@ numbers.forEach((number) => {
 });
 
 // 리턴 존재함? ... => forEach는 리턴이 없다
-names.forEach((name) => console.log(`${name} 안녕`));
+names.forEach((name, idx) => console.log(`${name} 안녕`));
 
 // 그냥 출력만 함.
-names.forEach((name) => {
+names.forEach((name, idx) => {
     return console.log(`${name} 안녕`);
 })
