@@ -1,18 +1,8 @@
 {
-  "name": "class",
-  "version": "1.0.0",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "SSAFY"
-  ],
-  "author": "",
-  "license": "ISC",
-  "description": "juno first npm package",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "mysql2": "^3.12.0"
   }
 }
