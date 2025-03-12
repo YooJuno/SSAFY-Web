@@ -1,9 +1,17 @@
 <script setup>
-let message = "Hello World!!!";
+import { ref } from "vue";
+
+const isLoading = ref(true);
 </script>
 
 <template>
-  <h1>message: {{ message }}</h1>
+  <p v-if="isLoading">로딩중...</p>
+  <ul v-else>
+    <li>짜장면</li>
+    <li>짬뽕</li>
+    <li>탕수육</li>
+  </ul>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
