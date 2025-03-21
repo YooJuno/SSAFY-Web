@@ -6,7 +6,7 @@ import numpy as np
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 # 비디오 파일 경로 또는 0(웹캠 사용)
-video_path = 'video.mp4'  # 또는 0
+video_path = 'video.mp4'  # 웹캠 사용 시 0
 
 # 비디오 캡처
 cap = cv2.VideoCapture(video_path)
@@ -21,13 +21,16 @@ while cap.isOpened():
     if not ret:
         break
 
-    # 모델에 맞게 프레임을 변환하여 객체 감지 수행
-    results = model(frame)
+    # OpenCV에서 읽은 BGR 이미지를 RGB로 변환
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # 결과에서 감지된 객체들의 정보를 얻어옴
+    # YOLO 모델 실행
+    results = model(frame_rgb, size=640)
+
+    # 감지된 객체의 정보 가져오기
     df = results.pandas().xyxy[0]  # DataFrame 형식으로 bbox 정보 반환
 
-    # 객체 정보를 프레임에 표시
+    # 감지된 객체를 프레임에 표시
     for _, row in df.iterrows():
         x1, y1, x2, y2 = int(row['xmin']), int(row['ymin']), int(row['xmax']), int(row['ymax'])
         label = f"{row['name']} {row['confidence']:.2f}"
