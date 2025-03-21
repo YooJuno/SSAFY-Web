@@ -8,7 +8,7 @@
 import express from "express"; // Express.js
 import morgan from "morgan"; // 서버 상세 로그 출력
 import http from "http";
-import pool from "./DB/db.js"
+import pool from "./DB/db.js";
 
 const PORT = 8000; // 8000번 포트 개방
 
@@ -17,9 +17,10 @@ app.use(morgan("dev")); // 개발용 로그
 
 // [ GET ]
 // 단순 조회
-app.get("/api/v1/status", (req, res) => {
+app.get("/api/v1/status", async (req, res) => {
   try {
-    return res.json({});
+    const data = await pool.query("SELECT * FROM robot_status");
+    return res.json(data[0]);
   } catch (error) {
     return res.json({
       error: error.message,
