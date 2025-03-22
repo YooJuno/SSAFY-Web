@@ -4,6 +4,8 @@ import json
 from dotenv import load_dotenv
 import os
 import time
+import cv2
+import get_status as get
 
 # .env.local 파일에서 환경 변수 로드
 load_dotenv(".env.local")
@@ -11,13 +13,22 @@ load_dotenv(".env.local")
 # 환경 변수에서 HOST와 PORT 읽기
 HOST = os.getenv("HOST")
 PORT = int(os.getenv("PORT"))
+TIME_INTERVAL = 1 # second
 
 robot_status = {
-    "power": "on",      # on/off
-    "language": "eng",  # eng/kor
-    "cur_dir": "up",    # up/down/left/right
-    "speed": "30",      # 0 - 100 
-    "client_message": "false", # client flag
+    'speed' : 0,
+    'battery' : 0,      # Percentage (0% ~ 100%)
+    'temperature' : 0,  # (-20, 40) Celsius
+    'humidity' : 0      # (0% ~ 100%);
+}
+
+image = {
+    'resolution' : {
+        'width' : 640,
+        'height' : 480,
+    },
+    'type' : 1, # Gray(1), RGB(3)
+    'data' : ''
 }
 
 def set_robot_status(client_socket):
@@ -32,22 +43,13 @@ def set_robot_status(client_socket):
                 for key, value in message.items():
                     if key not in robot_status:
                         raise KeyError(f"Invalid key: {key}. Key not found in robot_status.")
-                    if key == "power" and value not in ["on", "off"]:
-                        raise ValueError("Invalid power value. Must be 'on' or 'off'.")
-                    elif key == "language" and value not in ["eng", "kor"]:
-                        raise ValueError("Invalid language value. Must be 'eng' or 'kor'.")
-                    elif key == "cur_dir" and value not in ["up", "down", "left", "right"]:
-                        raise ValueError("Invalid cur_dir value. Must be 'up', 'down', 'left', or 'right'.")
-                    elif key == "speed":
-                        try:
-                            speed_int = int(value)  # Convert string to integer
-                            if not (0 <= speed_int <= 100):
-                                raise ValueError("Invalid speed value. Must be between 0 and 100.")
-                            robot_status[key] = str(speed_int)  # Store as string
-                        except ValueError:
-                            raise ValueError("Invalid speed value. Must be a string representing an integer between 0 and 100.")
+                    elif key == "yaw" and value not in range(0, 360):
+                        raise ValueError("Angle must be in 0 ~ 360")
+                    elif key == "speed" and value not in range(0, 40): # Maximum 40km/h
+                        raise ValueError("Speed must be in 0 ~ 40")
                     else:
                         robot_status[key] = value
+
                 print("robot_status is changed successfully.")
                 print(json.dumps(robot_status, indent=4))
             else:
@@ -64,19 +66,26 @@ def set_robot_status(client_socket):
 def send_robot_status(client_socket):
     while True:
         try:
-            time.sleep(1)
-            robot_status["client_message"] = "false"
+            time.sleep(TIME_INTERVAL)
+
+            robot_status['temperature'] = get.temperature()
+            robot_status['humidity'] = get.humidity()
+            robot_status['battery'] = get.battery()
+            robot_status['speed'] = get.speed()
+
             message = json.dumps(robot_status)
             client_socket.sendall(message.encode("utf-8"))
+
         except Exception as e:
             print(f"Error in send_robot_status: {e}")
             break
 
-def connect_to_server():
+def run():
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(f"Connecting to => {HOST}:{PORT}")
         client_socket.connect((HOST, PORT))
-        print(f"Connected to {HOST}:{PORT}")
+        print("Complished succesfully")
 
         thread1 = threading.Thread(target=set_robot_status, args=(client_socket,))
         thread2 = threading.Thread(target=send_robot_status, args=(client_socket,))
@@ -86,9 +95,9 @@ def connect_to_server():
 
         thread1.join()
         thread2.join()
+
     except Exception as e:
         print(f"Failed to connect: {e}")
 
 if __name__ == "__main__":
-    connect_to_server()
-
+    run()
