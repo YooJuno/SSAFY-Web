@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS  `robot`.`status`(
     `y` FLOAT,  -- 위치 Y
     
     `yaw` FLOAT,   -- 자세 (Yaw)
-    `pitch` FLOAT, -- 자세 (Pitch)
-    `roll` FLOAT,  -- 자세 (Roll)
+
+    `speed` FLOAT, -- 속도
     
     `battery` INT,    -- 배터리 상태 (퍼센트)
     `temperature` FLOAT, -- 온도
@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS  `robot`.`status`(
 );
 
 
-INSERT INTO `robot`.`status` (`x`, `y`, `yaw`, `pitch`, `roll`, `battery`, `temperature`, `humidity`) 
-VALUES ('0', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `robot`.`status` (`x`, `y`, `yaw`, `battery`, `temperature`, `humidity`) 
+VALUES ('0', '0', '0', '0', '0', '0');
 SELECT * FROM status;

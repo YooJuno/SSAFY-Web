@@ -8,9 +8,13 @@
 import express from "express"; // Express.js
 import morgan from "morgan"; // 서버 상세 로그 출력
 import http from "http";
+import { WebSocketServer } from "ws";
+import net from "net";
+
 import pool from "./DB/db.js";
 
-const PORT = 8000; // 8000번 포트 개방
+const PORT = 8000; // socket 8000번 포트 개방
+const TCP_SOCKET_PORT = 9000;// web socket 9000번 개방 
 
 const app = express(); // 서버 앱
 app.use(morgan("dev")); // 개발용 로그
@@ -20,8 +24,8 @@ app.use(express.json());
 // 단순 조회
 app.get("/api/v1/status", async (req, res) => {
   try {
-    const data = await pool.query("SELECT * FROM status;");
-    return res.json(data[0]);
+    const [data] = await pool.query("SELECT * FROM status;");
+    return res.json(data);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -31,8 +35,8 @@ app.get("/api/v1/status", async (req, res) => {
 
 app.get("/api/v1/logs", async (req, res) => {
   try {
-    const data = await pool.query("SELECT * FROM logs;");
-    return res.json(data[0]);
+    const [data] = await pool.query("SELECT * FROM logs;");
+    return res.json(data);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -42,8 +46,8 @@ app.get("/api/v1/logs", async (req, res) => {
 
 app.get("/api/v1/images", async (req, res) => {
   try {
-    const data = await pool.query("SELECT * FROM images;");
-    return res.json(data[0]);
+    const [data] = await pool.query("SELECT * FROM images;");
+    return res.json(data);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -57,13 +61,13 @@ app.post("/api/v1/status", async (req, res) => {
   try {
     await pool.query(
       "INSERT INTO `robot`.`status` \
-      (`x`, `y`, `yaw`, `pitch`, `roll`, `battery`, `temperature`, `humidity`) \
-      VALUES ('0', '0', '0', '0', '0', '0', '0', '0');"
+      (`x`, `y`, `yaw`, `battery`, `temperature`, `humidity`) \
+      VALUES ('0', '0', '0', '0', '0', '0');"
     );
 
-    const data = await pool.query("SELECT * FROM status;");
+    const [data] = await pool.query("SELECT * FROM status;");
 
-    return res.status(201).json(data[0]);
+    return res.status(201).json(data);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -93,9 +97,9 @@ app.post("/api/v1/images", async (req, res) => {
       "INSERT INTO `robot`.`images` (`image_url`) VALUES ('~/images/image1.png')"
     );
 
-    const data = await pool.query("SELECT * FROM images;");
+    const [data] = await pool.query("SELECT * FROM images;");
 
-    return res.status(201).json(data[0]);
+    return res.status(201).json(data);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -109,8 +113,71 @@ app.post("/api/v1/images", async (req, res) => {
 // [ DELETE ]
 // (단일, 전체) 데이터 삭제.
 
-const server = http.createServer(app); // HTTP 서버 생성
-server.listen(PORT, () => console.log(`Listening on ${PORT}`)); // 서버 동작
+const socketServer = http.createServer(app); // HTTP 서버 생성
+const webSocketServer = new WebSocketServer({ server: socketServer });
+
+let tcpSocketClients = [];
+let webSocketClients = [];
+
+const tcpSocketServer = net.createServer((socket) => {
+  console.log("TCP Socket client connected");
+
+  tcpSocketClients.push(socket);
+
+  socket.on("data", (data) => {
+    /*
+
+    DB에 저장하는 코드 부분
+
+    */
+   const message = data.toString()
+   console.log('socket : ', message['temperature'])
+    webSocketClients.forEach((webSocketClient) => {
+      webSocketClient.send(data);
+    });
+  });
+  socket.on("end", () => {
+    console.log("TCP client disconnected");
+    tcpSocketClients = tcpSocketClients.filter(
+      (tcpSocketClient) => tcpSocketClient !== socket
+    );
+  });
+});
+
+// Web Socket 서버 설정
+webSocketServer.on("connection", (webSocket) => {
+  console.log("Web Socket client connected");
+
+  webSocketClients.push(webSocket);
+
+  webSocket.on("message", (message) => {
+    /*
+
+    DB에 저장하는 코드 부분
+
+    */
+
+    // TCP 클라이언트에게 브로드캐스트 (대시보드 => 로봇 || 대시보드 => 시뮬레이터)
+    console.log('web socket : ', message)
+  
+    tcpSocketClients.forEach((tcpSocketClient) => {
+      tcpSocketClient.write(message.data);
+    });
+  });
+
+  webSocket.on("close", () => {
+    console.log("Web Socket client disconnected");
+    webSocketClients = webSocketClients.filter(
+      (webSocketClient) => webSocketClient !== webSocket
+    );
+  });
+});
+
+tcpSocketServer.listen(TCP_SOCKET_PORT, () => {
+  console.log(`TCP Socket server listening on port ${TCP_SOCKET_PORT}`);
+});
+
+socketServer.listen(PORT, () => console.log(`Web server listening on ${PORT}`)); // 서버 동작
 
 /*
 [ 성공 ]
