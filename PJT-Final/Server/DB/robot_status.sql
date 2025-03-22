@@ -1,17 +1,23 @@
-CREATE TABLE robot_status (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    image_url VARCHAR(255), -- 이미지 경로 (저장 경로 or URL)
+CREATE SCHEMA IF NOT EXISTS `robot` DEFAULT CHARACTER SET utf8mb4 ;
+USE robot;
+CREATE TABLE IF NOT EXISTS  `robot`.`status`(
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
     
-    pos_x FLOAT,  -- 위치 X
-    pos_y FLOAT,  -- 위치 Y
+    `x` FLOAT,  -- 위치 X
+    `y` FLOAT,  -- 위치 Y
     
-    orientation_yaw FLOAT,   -- 자세 (Yaw)
-    orientation_pitch FLOAT, -- 자세 (Pitch)
-    orientation_roll FLOAT,  -- 자세 (Roll)
+    `yaw` FLOAT,   -- 자세 (Yaw)
+    `pitch` FLOAT, -- 자세 (Pitch)
+    `roll` FLOAT,  -- 자세 (Roll)
     
-    battery INT,    -- 배터리 상태 (퍼센트)
-    temperature FLOAT, -- 온도
-    humidity FLOAT, -- 습도
+    `battery` INT,    -- 배터리 상태 (퍼센트)
+    `temperature` FLOAT, -- 온도
+    `humidity` FLOAT, -- 습도
 
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+
+INSERT INTO `robot`.`status` (`x`, `y`, `yaw`, `pitch`, `roll`, `battery`, `temperature`, `humidity`) 
+VALUES ('0', '0', '0', '0', '0', '0', '0', '0');
+SELECT * FROM status;

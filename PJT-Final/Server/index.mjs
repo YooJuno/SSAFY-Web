@@ -14,12 +14,35 @@ const PORT = 8000; // 8000번 포트 개방
 
 const app = express(); // 서버 앱
 app.use(morgan("dev")); // 개발용 로그
+app.use(express.json());
 
 // [ GET ]
 // 단순 조회
 app.get("/api/v1/status", async (req, res) => {
   try {
-    const data = await pool.query("SELECT * FROM robot_status");
+    const data = await pool.query("SELECT * FROM status;");
+    return res.json(data[0]);
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+});
+
+app.get("/api/v1/logs", async (req, res) => {
+  try {
+    const data = await pool.query("SELECT * FROM logs;");
+    return res.json(data[0]);
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+});
+
+app.get("/api/v1/images", async (req, res) => {
+  try {
+    const data = await pool.query("SELECT * FROM images;");
     return res.json(data[0]);
   } catch (error) {
     return res.json({
@@ -30,9 +53,49 @@ app.get("/api/v1/status", async (req, res) => {
 
 // [ POST ]
 // 서버에 새로운 데이터 생성
-app.post("/api/v1/", (req, res) => {
+app.post("/api/v1/status", async (req, res) => {
   try {
-    return res.json({});
+    await pool.query(
+      "INSERT INTO `robot`.`status` \
+      (`x`, `y`, `yaw`, `pitch`, `roll`, `battery`, `temperature`, `humidity`) \
+      VALUES ('0', '0', '0', '0', '0', '0', '0', '0');"
+    );
+
+    const data = await pool.query("SELECT * FROM status;");
+
+    return res.status(201).json(data[0]);
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+});
+
+app.post("/api/v1/logs", async (req, res) => {
+  try {
+    await pool.query(
+      "INSERT INTO `robot`.`logs` (`robot_id`, `log_message`, `log_type`) \
+      VALUES ('junobot2', '잘 작동중', '1');"
+    );
+
+    const data = await pool.query("SELECT * FROM logs;");
+
+    return res.status(201).json(data[0]);
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+});
+app.post("/api/v1/images", async (req, res) => {
+  try {
+    await pool.query(
+      "INSERT INTO `robot`.`images` (`image_url`) VALUES ('~/images/image1.png')"
+    );
+
+    const data = await pool.query("SELECT * FROM images;");
+
+    return res.status(201).json(data[0]);
   } catch (error) {
     return res.json({
       error: error.message,
@@ -42,27 +105,9 @@ app.post("/api/v1/", (req, res) => {
 
 // [ PATCH ]
 // 기존 단일 데이터 수정.
-app.patch("/api/v1/", (req, res) => {
-  try {
-    return res.json({});
-  } catch (error) {
-    return res.json({
-      error: error.message,
-    });
-  }
-});
 
 // [ DELETE ]
 // (단일, 전체) 데이터 삭제.
-app.delete("/api/v1/", (req, res) => {
-  try {
-    return res.json({});
-  } catch (error) {
-    return res.json({
-      error: error.message,
-    });
-  }
-});
 
 const server = http.createServer(app); // HTTP 서버 생성
 server.listen(PORT, () => console.log(`Listening on ${PORT}`)); // 서버 동작
